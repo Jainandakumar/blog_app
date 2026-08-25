@@ -1,0 +1,15 @@
+<%= form_with(url: post_comment_comment_ratings_path(post, comment), method: :post, class: "star-rating-form") do |form| %>
+  <div class="star-rating-field">
+    <div class="star-rating">
+      <% (1..5).each do |star| %>
+        <%= form.radio_button :value, star, id: "rating_comment_#{comment.id}_star_#{star}", class: "star-input" %>
+        <%= form.label "value_#{star}", "★", for: "rating_comment_#{comment.id}_star_#{star}", class: "star-label", title: "#{star} star#{"s" if star > 1}" %>
+      <% end %>
+    </div>
+    <div class="rating-user-select">
+      <%= form.label :user_id, "Your name:" %>
+      <%= form.select :user_id, User.order(:name).map { |u| [u.name, u.id] }, { prompt: "Select user…" }, class: "rating-user-dropdown" %>
+    </div>
+    <%= form.submit "Rate", class: "btn-rate" %>
+  </div>
+<% end %>

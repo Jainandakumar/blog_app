@@ -1,0 +1,29 @@
+<div class="comment" id="<%= dom_id(comment) %>">
+  <p class="comment-body"><%= comment.body %></p>
+
+  <div class="comment-rating-display">
+    <% ratings = comment.comment_ratings %>
+    <% if ratings.any? %>
+      <% avg = (ratings.sum(&:value).to_f / ratings.size).round(1) %>
+      <span class="stars-display" title="<%= avg %> out of 5">
+        <% 5.times do |i| %>
+          <span class="star-icon <%= i < avg.round ? "star-filled" : "star-empty" %>">★</span>
+        <% end %>
+      </span>
+      <span class="rating-summary"><%= avg %> / 5 (<%= pluralize(ratings.size, "rating") %>)</span>
+    <% else %>
+      <span class="no-rating">No ratings yet</span>
+    <% end %>
+  </div>
+
+  <details class="rating-form-toggle">
+    <summary>Rate this comment</summary>
+    <%= render "comment_ratings/form", post: post, comment: comment %>
+  </details>
+
+  <p class="comment-meta">
+    Posted <%= comment.created_at.strftime("%B %d, %Y at %H:%M") %>
+    &nbsp;
+    <%= button_to "Delete", post_comment_path(post, comment), method: :delete, data: { turbo_confirm: "Delete this comment?" }, class: "btn-link-danger" %>
+  </p>
+</div>

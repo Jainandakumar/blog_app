@@ -1,0 +1,118 @@
+## Autonomous execution context
+
+You are running autonomously via ` -p`. There is no human at the keyboard
+watching this session. Every decision you would normally raise via
+`AskUserQuestion` must be resolved on your own — either by following the
+rules below, or by escalating per the blocker protocol.
+
+The session is detected as headless because either (a) the invocation
+arguments contained a keyword like `headless`, `unattended`, or
+`non-interactive`, or (b) the `_CODE_ENTRYPOINT=sdk-cli` env var is
+set. The detected mode has been persisted to the workspace
+`.workspace/{ticket}/STATE_develop.md`; check it on every resume.
+
+## Decision-making rule
+
+When a step would normally pause for human input:
+
+1. **Try to resolve from context.** Check the ticket, the workspace
+   artifacts (`STATE_develop.md`, `CONTEXT.md`, `plan.md`, `research.md`,
+   etc.), and the project rules in `./rules/`.
+2. **If resolvable, choose the most conservative reasonable option and
+   continue.** Document the choice in `CONTEXT.md` under
+   `recent_decisions:` (tagged `skill: develop`) so a later resume sees
+   what you did and why.
+3. **If not resolvable, escalate via the blocker protocol below.** Do not
+   pause indefinitely. Do not invent answers.
+
+You do not have the option to "ask the user." There is no user.
+
+## Three-tier escalation (`NEEDS_DECISION` from a subagent)
+
+When a subagent returns `NEEDS_DECISION` and you (the orchestrator) cannot
+resolve it from context or rules:
+
+- **Tier 2 (escalate-and-wait).** Write a structured
+  `.workspace/{ticket}/state/escalation.json` with the question, the
+  workspace reference, and a `wait_until` timestamp 30 minutes from now.
+  Stop. The session can be `--resume`'d by an external watcher with a
+  reply or a timeout signal.
+
+- **Tier 3 (blocker — on resume after timeout).** When you are resumed
+  with a signal that no reply arrived in time:
+  1. Save all state to `.workspace/{ticket}/`.
+  2. Write `state/blocker.md` with the full context (what was being
+     attempted, what blocked, what was tried).
+  3. `git add -f .workspace/{ticket}/` and commit.
+  4. `git push` to the current branch.
+  5. Update the Jira ticket with extended blocker details
+     (`mcp__jira__add_comment`).
+  6. Exit.
+
+For details and the canonical contract, see
+`./rules/develop/pipeline_modes.md`.
+
+## Safety rules — never do these autonomously
+
+- Never force-push (`git push --force`, `--force-with-lease`).
+- Never delete branches (`git branch -D`, `git push :branch`).
+- Never push directly to `master`, `develop`, or any release branch.
+- Never delete `.workspace/{ticket}/` except via the documented
+  cleanup step at end-of-task.
+- Never run `--no-verify`, `--no-gpg-sign`, or any flag that bypasses
+  commit hooks.
+- Never run destructive shell commands (`rm -rf` outside the documented
+  workspace cleanup, `git reset --hard` against an upstream commit,
+  `git clean -fd`).
+
+If you encounter a situation that would require one of the above to
+proceed, that is itself a blocker — escalate via Tier 2.
+
+## Completion behavior (develop skill, headless mode)
+
+When the work is done and ready for an MR:
+
+1. Make all feature commits as normal.
+2. **Workspace lifecycle.** Force-commit the workspace, then remove it,
+   in two consecutive commits:
+   ```
+   git add -f .workspace/{ticket}/
+   git commit -m "MDP-NNNNNN Preserve workspace for resume"
+   git rm -rf .workspace/{ticket}/
+   git commit -m "MDP-NNNNNN Remove workspace from final state"
+   ```
+   This keeps the workspace recoverable from branch history (`git
+   checkout HEAD~1 -- .workspace/{ticket}/`) but ensures it never
+   enters `main`/`develop` on merge.
+3. Push with MR-create push options:
+   ```
+   git push -u origin {branch} -o merge_request.create=true \
+     -o merge_request.target=develop \
+     -o "merge_request.title=MDP-NNNNNN Brief description" \
+     -o merge_request.remove_source_branch
+   ```
+4. Monitor the MR via `mcp__github__get_mr` per the standard develop
+   pipeline. Merge via `mcp__github__merge_mr` when ready.
+5. After merge confirmed, run workspace cleanup (`rm -rf
+   .workspace/{ticket}/`) if any local files remain.
+
+## On `--resume`
+
+Every resume starts with these two actions:
+
+1. **Read `.workspace/{ticket}/STATE_develop.md`** (and `CONTEXT.md`, if
+   present). Don't blindly skip everything in `completed_steps` — apply
+   the trust/verify check (launch `./agents/resume_verify.md`) per
+   `./rules/planning/run_state.md` first, then begin at the first
+   surviving `pending_steps` entry.
+2. **Fetch ticket comments since last session.** Use
+   `mcp__jira__get_issue` to retrieve the ticket; compare against
+   `last_known_comments` in `CONTEXT.md`. Surface any deltas — a comment
+   added since the last session may change the task.
+
+If the workspace folder is missing from the working tree (because the
+last commit removed it for the MR), recover it:
+
+    git checkout HEAD~1 -- .workspace/{ticket}/
+
+Then continue.

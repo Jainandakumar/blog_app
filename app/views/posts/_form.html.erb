@@ -1,0 +1,31 @@
+<%= form_with(model: post) do |form| %>
+  <% if post.errors.any? %>
+    <div class="error-messages">
+      <h3><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h3>
+      <ul>
+        <% post.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :user_id, "Author" %>
+    <%= form.select :user_id, @users.map { |u| [u.name, u.id] }, { prompt: "Select an author" } %>
+  </div>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title, placeholder: "Enter post title" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :body %>
+    <%= form.text_area :body, rows: 8, placeholder: "Write your post content here..." %>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit %>
+  </div>
+<% end %>

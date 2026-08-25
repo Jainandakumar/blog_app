@@ -1,0 +1,2 @@
+# This file ensures the local_workspace directory is tracked by Git
+# All other files in this directory are ignored by Git

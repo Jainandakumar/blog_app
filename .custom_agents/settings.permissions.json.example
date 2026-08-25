@@ -1,0 +1,13 @@
+{
+  "_readme": [
+    "Add these entries to your ./settings.local.json permissions allow list.",
+    "./settings.local.json is gitignored — never commit it."
+  ],
+  "permissions": {
+    "allow": [
+      "mcp__jira__*",
+      "mcp__confluence__*",
+      "mcp__gitlab__*"
+    ]
+  }
+}

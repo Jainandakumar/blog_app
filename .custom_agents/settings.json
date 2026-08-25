@@ -1,0 +1,44 @@
+{
+  "model": "sonnet[1m]",
+  "MdExcludes": [
+    "**/./rules/meta/decision_log.md",
+    "**/./rules/meta/instruction_authoring.md",
+    "**/./rules/meta/content_discipline.md",
+    "**/./rules/meta/README.md",
+    "**/./rules/agent_authoring/**",
+    "**/./rules/develop/**",
+    "**/./rules/planning/**",
+    "**/./rules/research/**",
+    "**/./rules/workflows/**",
+    "**/./rules/troubleshooting/**",
+    "**/./rules/jira/**",
+    "**/./rules/git/**",
+    "**/./rules/integrations/**",
+    "**/./rules/code_review/**",
+    "**/./rules/documentation/**",
+    "**/./rules/style/README.md",
+    "**/./rules/style/linters.md",
+    "**/./rules/security/README.md",
+    "**/./rules/design/README.md",
+    "**/./rules/architecture/README.md",
+    "**/./rules/architecture/deployment.md",
+    "**/./rules/architecture/feature_toggle.md",
+    "**/./rules/architecture/feature_toggle_cleanup.md",
+    "**/./rules/architecture/system_overview.md",
+    "**/./rules/testing/README.md",
+    "**/./rules/yard/README.md"
+  ],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd) && { FILE=$(jq -er '.tool_input.file_path' < /dev/stdin 2>/dev/null) || exit 0; } && case \"$FILE\" in \"$ROOT/\"*) ;; *) exit 0;; esac && REL=\"${FILE#\"$ROOT\"/}\" && (grep -qxF \"$REL\" \"$ROOT/.-touched-files\" 2>/dev/null || printf '%s\\n' \"$REL\" >> \"$ROOT/.-touched-files\")"
+          }
+        ]
+      }
+    ]
+  }
+}

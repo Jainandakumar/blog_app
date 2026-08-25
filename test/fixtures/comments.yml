@@ -1,0 +1,7 @@
+one:
+  body: Great post!
+  post: one
+
+two:
+  body: I disagree with this.
+  post: one

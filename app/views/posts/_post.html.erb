@@ -1,0 +1,16 @@
+<article class="post-card" id="<%= dom_id(post) %>">
+  <h2><%= link_to post.title, post_path(post) %></h2>
+  <p class="post-meta">
+    By <strong><%= post.user.name %></strong> &mdash;
+    <%= post.created_at.strftime("%B %d, %Y") %>
+    &mdash; <%= post.comments.size %> comment(s)
+  </p>
+  <p class="post-body"><%= truncate(post.body, length: 200) %></p>
+  <div class="post-actions">
+    <%= link_to "Read more", post_path(post) %>
+    &nbsp;|&nbsp;
+    <%= link_to "Edit", edit_post_path(post) %>
+    &nbsp;|&nbsp;
+    <%= button_to "Delete", post_path(post), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "btn-link-danger" %>
+  </div>
+</article>

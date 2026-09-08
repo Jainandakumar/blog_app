@@ -1,4 +1,4 @@
-<%= form_with(url: post_comment_comment_ratings_path(post, comment), method: :post, class: "star-rating-form") do |form| %>
+<%= form_with(url: post_comment_comment_ratings_path(post, comment), method: :post, scope: :comment_rating, class: "star-rating-form") do |form| %>
   <div class="star-rating-field">
     <div class="star-rating">
       <% (1..5).each do |star| %>

@@ -4,6 +4,10 @@
     By <strong><%= post.user.name %></strong> &mdash;
     <%= post.created_at.strftime("%B %d, %Y") %>
     &mdash; <%= post.comments.size %> comment(s)
+    &mdash;
+    <% likes    = post.post_ratings.count { |r| r.value == 1 } %>
+    <% dislikes = post.post_ratings.count { |r| r.value == -1 } %>
+    <span class="inline-reactions">👍 <%= likes %> &middot; 👎 <%= dislikes %></span>
   </p>
   <p class="post-body"><%= truncate(post.body, length: 200) %></p>
   <div class="post-actions">

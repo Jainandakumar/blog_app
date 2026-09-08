@@ -392,3 +392,115 @@ main {
 .btn-rate:hover {
   background: #2563eb;
 }
+
+/* ===== Post Reactions (Like/Dislike) ===== */
+.post-reactions {
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.reaction-counts {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.reaction-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.like-count {
+  color: #16a34a;
+}
+
+.dislike-count {
+  color: #dc2626;
+}
+
+.inline-reactions {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.reaction-form-toggle {
+  margin-top: 0.5rem;
+}
+
+.reaction-form-toggle summary {
+  cursor: pointer;
+  color: #3b82f6;
+  font-size: 0.9rem;
+  user-select: none;
+  margin-bottom: 0.5rem;
+}
+
+.post-rating-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.reaction-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.reaction-option {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+
+.reaction-input {
+  display: none;
+}
+
+.reaction-label {
+  padding: 0.3rem 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.reaction-input:checked + .reaction-label.like-label {
+  border-color: #16a34a;
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.reaction-input:checked + .reaction-label.dislike-label {
+  border-color: #dc2626;
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.reaction-label:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.reaction-user-select {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.reaction-user-dropdown {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}

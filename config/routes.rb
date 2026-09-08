@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :users
 
   resources :posts do
+    resources :post_ratings, only: %i[ create ]
     resources :comments, only: %i[ create destroy ] do
       resources :comment_ratings, only: %i[ create ]
     end

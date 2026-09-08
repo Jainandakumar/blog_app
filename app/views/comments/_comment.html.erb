@@ -2,12 +2,13 @@
   <p class="comment-body"><%= comment.body %></p>
 
   <div class="comment-rating-display">
-    <% ratings = comment.comment_ratings %>
+    <% ratings = comment.comment_ratings.to_a %>
     <% if ratings.any? %>
-      <% avg = (ratings.sum(&:value).to_f / ratings.size).round(1) %>
+      <% avg = (ratings.map(&:value).sum.to_f / ratings.size).round(1) %>
       <span class="stars-display" title="<%= avg %> out of 5">
+        <% filled = (avg + 0.5).floor %>
         <% 5.times do |i| %>
-          <span class="star-icon <%= i < avg.round ? "star-filled" : "star-empty" %>">★</span>
+          <span class="star-icon <%= i < filled ? "star-filled" : "star-empty" %>">★</span>
         <% end %>
       </span>
       <span class="rating-summary"><%= avg %> / 5 (<%= pluralize(ratings.size, "rating") %>)</span>

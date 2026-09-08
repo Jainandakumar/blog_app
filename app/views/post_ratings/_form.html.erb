@@ -1,0 +1,17 @@
+<%= form_with(url: post_post_ratings_path(post), method: :post, scope: :post_rating, class: "post-rating-form") do |form| %>
+  <div class="reaction-buttons">
+    <label class="reaction-option">
+      <%= form.radio_button :value, 1, id: "post_rating_#{post.id}_like", class: "reaction-input" %>
+      <span class="reaction-label like-label" title="Like">👍 Like</span>
+    </label>
+    <label class="reaction-option">
+      <%= form.radio_button :value, -1, id: "post_rating_#{post.id}_dislike", class: "reaction-input" %>
+      <span class="reaction-label dislike-label" title="Dislike">👎 Dislike</span>
+    </label>
+  </div>
+  <div class="reaction-user-select">
+    <%= form.label :user_id, "Your name:" %>
+    <%= form.select :user_id, User.order(:name).map { |u| [u.name, u.id] }, { prompt: "Select user…" }, class: "reaction-user-dropdown" %>
+  </div>
+  <%= form.submit "Submit Reaction", class: "btn-rate" %>
+<% end %>

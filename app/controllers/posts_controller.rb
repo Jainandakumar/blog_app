@@ -2,12 +2,13 @@ class PostsController < ApplicationController
   before_action :set_post, only: %i[ show edit update destroy ]
 
   def index
-    @posts = Post.includes(:user).order(created_at: :desc)
+    @posts = Post.includes(:user, :post_ratings).order(created_at: :desc)
   end
 
   def show
     @comment = Comment.new
     @comments = @post.comments.includes(:comment_ratings).order(created_at: :asc)
+    @post_ratings = @post.post_ratings.to_a
   end
 
   def new

@@ -1,0 +1,3 @@
+# No pre-loaded fixtures — tests create their own records to avoid
+# uniqueness constraint conflicts across the user/post combinations
+# used in the test setup.

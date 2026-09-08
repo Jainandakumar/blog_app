@@ -8,6 +8,19 @@
     <%= simple_format(@post.body) %>
   </div>
 
+  <div class="post-reactions">
+    <% likes    = @post_ratings.count { |r| r.value == 1 } %>
+    <% dislikes = @post_ratings.count { |r| r.value == -1 } %>
+    <div class="reaction-counts">
+      <span class="reaction-count like-count">👍 <%= likes %> <%= "Like".pluralize(likes) %></span>
+      <span class="reaction-count dislike-count">👎 <%= dislikes %> <%= "Dislike".pluralize(dislikes) %></span>
+    </div>
+    <details class="reaction-form-toggle">
+      <summary>React to this post</summary>
+      <%= render "post_ratings/form", post: @post %>
+    </details>
+  </div>
+
   <div class="post-actions">
     <%= link_to "Edit Post", edit_post_path(@post) %>
     &nbsp;|&nbsp;
